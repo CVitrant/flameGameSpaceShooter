@@ -7,6 +7,7 @@ import 'package:flame/src/gestures/events.dart';
 import 'package:flamegame/common/background.dart';
 import 'package:flamegame/game/bullet.dart';
 import 'package:flamegame/game/enemies.dart';
+import 'package:flamegame/game/explosion.dart';
 import 'package:flamegame/game/player.dart';
 import 'package:flamegame/game_manager.dart';
 
@@ -40,7 +41,12 @@ class GameScreen extends Component with HasGameRef<GameManager> {
 
   void _onPlayerTouch() {}
 
-  void _onEnemiesTouch(Vector2 position) {}
+  void _onEnemiesTouch(Vector2 position) {
+    var explosion = Explosion();
+    explosion.position = position;
+    add(explosion);
+    score++;
+  }
 
   @override
   void onMount() {
