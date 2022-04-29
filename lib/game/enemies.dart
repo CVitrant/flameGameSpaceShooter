@@ -1,14 +1,18 @@
 import 'dart:math';
 
 import 'package:flame/assets.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
-import 'package:flamegame/game_manager.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flamegame/game/bullet.dart';
 
-class Enemy extends SpriteAnimationComponent with HasGameRef<GameManager> {
-  final VoidCallback onEnemiesTouch;
+import 'package:flamegame/game_manager.dart';
+
+class Enemy extends SpriteAnimationComponent
+    with HasGameRef<GameManager>, CollisionCallbacks {
+  final Function(Vector2) onEnemiesTouch;
   final double _speed = 250;
+  var hitboxRectangle = RectangleHitbox();
 
   Enemy(this.onEnemiesTouch);
 
@@ -26,6 +30,18 @@ class Enemy extends SpriteAnimationComponent with HasGameRef<GameManager> {
     width = size;
     height = size;
     anchor = Anchor.center;
+
+    add(hitboxRectangle);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is Bullet) {
+      removeFromParent();
+      remove(hitboxRectangle);
+      onEnemiesTouch.call(other.position);
+    }
   }
 
   void move(Vector2 delta) {
@@ -38,7 +54,7 @@ class Enemy extends SpriteAnimationComponent with HasGameRef<GameManager> {
     position += Vector2(0, 1) * _speed * dt;
     if (position.y > gameRef.size.y) {
       removeFromParent();
-      //removeHitbox(hitboxRectangle);
+      remove(hitboxRectangle);
     }
   }
 }

@@ -5,7 +5,7 @@ import 'package:flame/input.dart';
 import 'package:flamegame/game/game_screen.dart';
 import 'package:flamegame/main/main_screen.dart';
 
-class GameManager extends FlameGame with PanDetector {
+class GameManager extends FlameGame with HasCollisionDetection, PanDetector {
   late GameScreen _gameScreen;
   late MainScreen _mainScreen;
 

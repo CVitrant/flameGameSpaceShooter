@@ -24,7 +24,6 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     add(Background(40));
     _player = Player(_onPlayerTouch);
     add(_player);
-    add(Enemy(_onEnemiesTouch));
   }
 
   void _spawnBullet() {
@@ -41,7 +40,7 @@ class GameScreen extends Component with HasGameRef<GameManager> {
 
   void _onPlayerTouch() {}
 
-  void _onEnemiesTouch() {}
+  void _onEnemiesTouch(Vector2 position) {}
 
   @override
   void onMount() {
