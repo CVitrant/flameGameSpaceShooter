@@ -8,14 +8,12 @@ import 'package:flamegame/common/background.dart';
 import 'package:flamegame/game/bullet.dart';
 import 'package:flamegame/game/enemies.dart';
 import 'package:flamegame/game/explosion.dart';
-import 'package:flamegame/game/pause.dart';
 import 'package:flamegame/game/player.dart';
 import 'package:flamegame/game_manager.dart';
 
 class GameScreen extends Component with HasGameRef<GameManager> {
   static const int playerLevelByScore = 20;
   late Player _player;
-  late Pause _pauseButton;
   late Timer enemySpawn;
   late Timer bulletSpawn;
   int score = 0;
@@ -27,8 +25,6 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     bulletSpawn = Timer(1.5, onTick: _spawnBullet, repeat: true);
     add(Background(40));
     _player = Player(_onPlayerTouch);
-    _pauseButton = Pause();
-    add(_pauseButton);
     add(_player);
     add(_scoreText);
     add(_healthText);
@@ -54,10 +50,10 @@ class GameScreen extends Component with HasGameRef<GameManager> {
 
   void _onPlayerTouch(Vector2 position) {
     health--;
-    _healthText.text = 'Health: $health';
     if (health == 0) {
-      gameRef.paused = true;
+      gameRef.endGame(score);
     }
+    _healthText.text = 'Health: $health';
   }
 
   void _onEnemiesTouch(Vector2 position) {
