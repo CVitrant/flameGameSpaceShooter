@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flamegame/game/bullet.dart';
+import 'package:flamegame/game/player.dart';
 
 import 'package:flamegame/game_manager.dart';
 
@@ -37,7 +38,7 @@ class Enemy extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is Bullet) {
+    if (other is Bullet || other is Player) {
       removeFromParent();
       remove(hitboxRectangle);
       onEnemiesTouch.call(other.position);

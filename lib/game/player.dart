@@ -1,13 +1,16 @@
 import 'package:flame/assets.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
+import 'package:flamegame/game/enemies.dart';
 import 'package:flamegame/game_manager.dart';
-import 'package:flutter/cupertino.dart';
 
-class Player extends SpriteAnimationComponent with HasGameRef<GameManager> {
-  final VoidCallback onTouch;
+class Player extends SpriteAnimationComponent
+    with HasGameRef<GameManager>, CollisionCallbacks {
+  final Function(Vector2) onPlayerTouch;
+  var hitboxRectangle = RectangleHitbox();
 
-  Player(this.onTouch);
+  Player(this.onPlayerTouch);
 
   @override
   Future<void>? onLoad() async {
@@ -18,6 +21,16 @@ class Player extends SpriteAnimationComponent with HasGameRef<GameManager> {
     width = 80;
     height = 120;
     anchor = Anchor.center;
+
+    add(hitboxRectangle);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is Enemy) {
+      onPlayerTouch.call(other.position);
+    }
   }
 
   void move(Vector2 delta) {

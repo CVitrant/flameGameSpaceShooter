@@ -5,7 +5,7 @@ import 'package:flamegame/game_manager.dart';
 
 class Bullet extends SpriteComponent
     with HasGameRef<GameManager>, CollisionCallbacks {
-  final double _speed = 450;
+  final double _speed = 600;
   var hitboxRectangle = RectangleHitbox();
 
   @override
