@@ -11,11 +11,12 @@ import 'package:flamegame/game_manager.dart';
 
 class Enemy extends SpriteAnimationComponent
     with HasGameRef<GameManager>, CollisionCallbacks {
-  final Function(Vector2) onEnemiesTouch;
+  final Function(Vector2) onEnemiesDestruction;
+  final Function(Vector2) onEnemiesCollision;
   final double _speed = 250;
   var hitboxRectangle = RectangleHitbox();
 
-  Enemy(this.onEnemiesTouch);
+  Enemy(this.onEnemiesDestruction, this.onEnemiesCollision);
 
   @override
   Future<void>? onLoad() async {
@@ -38,10 +39,15 @@ class Enemy extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is Bullet || other is Player) {
+    if (other is Bullet) {
       removeFromParent();
       remove(hitboxRectangle);
-      onEnemiesTouch.call(other.position);
+      onEnemiesDestruction.call(other.position);
+    }
+    if (other is Player) {
+      removeFromParent();
+      remove(hitboxRectangle);
+      onEnemiesCollision.call(other.position);
     }
   }
 

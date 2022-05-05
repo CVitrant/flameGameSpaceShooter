@@ -3,26 +3,19 @@ import 'dart:math';
 import 'package:flame/assets.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/sprite.dart';
-import 'package:flamegame/game/bullet.dart';
 import 'package:flamegame/game/player.dart';
 
 import 'package:flamegame/game_manager.dart';
 
-class Bonus extends SpriteAnimationComponent
+class Bonus extends SpriteComponent
     with HasGameRef<GameManager>, CollisionCallbacks {
-  final Function(Vector2) onEnemiesTouch;
-  final double _speed = 250;
+  final double _speed = 200;
   var hitboxRectangle = RectangleHitbox();
-
-  Bonus(this.onEnemiesTouch);
-
   @override
   Future<void>? onLoad() async {
-    var spritePlayer = SpriteSheet(
-        image: await Images().load('enemy.png'), srcSize: Vector2(16.0, 16.0));
-    animation = spritePlayer.createAnimation(row: 0, stepTime: 0.2);
-    var size = 40.0;
+    var spritePlayer = await Images().load('heart.png');
+    var size = 50.0;
+    sprite = Sprite(spritePlayer);
     position = Vector2(
         Random()
             .nextInt((gameRef.size.toRect().width - size).toInt())
@@ -38,10 +31,9 @@ class Bonus extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is Bullet || other is Player) {
+    if (other is Player) {
       removeFromParent();
       remove(hitboxRectangle);
-      onEnemiesTouch.call(other.position);
     }
   }
 

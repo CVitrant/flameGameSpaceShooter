@@ -2,15 +2,17 @@ import 'package:flame/assets.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
+import 'package:flamegame/game/bonus.dart';
 import 'package:flamegame/game/enemies.dart';
 import 'package:flamegame/game_manager.dart';
 
 class Player extends SpriteAnimationComponent
     with HasGameRef<GameManager>, CollisionCallbacks {
-  final Function(Vector2) onPlayerTouch;
+  final Function(Vector2) onPlayerHeal;
+  final Function(Vector2) onPlayerCollision;
   var hitboxRectangle = RectangleHitbox();
 
-  Player(this.onPlayerTouch);
+  Player(this.onPlayerCollision, this.onPlayerHeal);
 
   @override
   Future<void>? onLoad() async {
@@ -29,7 +31,10 @@ class Player extends SpriteAnimationComponent
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is Enemy) {
-      onPlayerTouch.call(other.position);
+      onPlayerCollision.call(other.position);
+    }
+    if (other is Bonus) {
+      onPlayerHeal.call(other.position);
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flamegame/game/game_screen.dart';
 import 'package:flamegame/main/main_screen.dart';
+//import 'package:flutter/material.dart';
 
 class GameManager extends FlameGame with HasCollisionDetection, PanDetector {
   late GameScreen _gameScreen;
@@ -21,6 +22,15 @@ class GameManager extends FlameGame with HasCollisionDetection, PanDetector {
   Future<void>? onLoad() {
     add(_mainScreen);
   }
+/*
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      GameManager().paused = true;
+    } else {
+      print(state.toString());
+    }
+  }
+*/
 
   @override
   void onPanStart(DragStartInfo info) {

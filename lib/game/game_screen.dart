@@ -3,8 +3,10 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/src/gestures/events.dart';
 import 'package:flamegame/common/background.dart';
+import 'package:flamegame/game/bonus.dart';
 import 'package:flamegame/game/bullet.dart';
 import 'package:flamegame/game/enemies.dart';
 import 'package:flamegame/game/explosion.dart';
@@ -16,15 +18,19 @@ class GameScreen extends Component with HasGameRef<GameManager> {
   late Player _player;
   late Timer enemySpawn;
   late Timer bulletSpawn;
+  late Timer heartSpawn;
   int score = 0;
   int health = 3;
 
   @override
-  Future<void>? onLoad() {
+  Future<void>? onLoad() async {
+    await Flame.images.load('heart.png');
     enemySpawn = Timer(2, onTick: _spawnEnemy, repeat: true);
     bulletSpawn = Timer(1.5, onTick: _spawnBullet, repeat: true);
+    heartSpawn =
+        Timer((health * 5).toDouble(), onTick: _spawnHeart, repeat: true);
     add(Background(40));
-    _player = Player(_onPlayerTouch);
+    _player = Player(_onPlayerEnemyTouch, _onPlayerHeal);
     add(_player);
     add(_scoreText);
     add(_healthText);
@@ -44,11 +50,29 @@ class GameScreen extends Component with HasGameRef<GameManager> {
 
   void _spawnEnemy() {
     for (int i = 0; i <= min(score ~/ playerLevelByScore, 2); i++) {
-      add(Enemy(_onEnemiesTouch));
+      add(Enemy(_onEnemiesDes, _onEnemiesCollision));
     }
   }
 
-  void _onPlayerTouch(Vector2 position) {
+  void _spawnHeart() {
+    var heart = Bonus();
+    add(heart);
+  }
+
+  void _onPlayerHeal(Vector2 vector2) {
+    if (health < 10) {
+      health++;
+    }
+    _healthText.text = 'Health: $health';
+  }
+
+  void _onEnemiesCollision(Vector2 position) {
+    var explosion = Explosion();
+    explosion.position = position;
+    add(explosion);
+  }
+
+  void _onPlayerEnemyTouch(Vector2 position) {
     health--;
     if (health == 0) {
       gameRef.endGame(score);
@@ -56,7 +80,7 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     _healthText.text = 'Health: $health';
   }
 
-  void _onEnemiesTouch(Vector2 position) {
+  void _onEnemiesDes(Vector2 position) {
     var explosion = Explosion();
     explosion.position = position;
     add(explosion);
@@ -69,6 +93,7 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     super.onMount();
     enemySpawn.start();
     bulletSpawn.start();
+    heartSpawn.start();
   }
 
   @override
@@ -76,6 +101,7 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     super.update(dt);
     enemySpawn.update(dt);
     bulletSpawn.update(dt);
+    heartSpawn.update(dt);
   }
 
   @override
@@ -83,6 +109,7 @@ class GameScreen extends Component with HasGameRef<GameManager> {
     super.onRemove();
     enemySpawn.stop();
     bulletSpawn.stop();
+    heartSpawn.stop();
   }
 
   void onPanUpdate(DragUpdateInfo info) {
