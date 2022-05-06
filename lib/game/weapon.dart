@@ -7,14 +7,14 @@ import 'package:flamegame/game/player.dart';
 
 import 'package:flamegame/game_manager.dart';
 
-class Bonus extends SpriteComponent
+class Weapon extends SpriteComponent
     with HasGameRef<GameManager>, CollisionCallbacks {
-  final double _speed = 200;
+  final double _speed = 500;
   var hitboxRectangle = RectangleHitbox();
   @override
   Future<void>? onLoad() async {
-    var spritePlayer = await Images().load('heart.png');
-    var size = 50.0;
+    var spritePlayer = await Images().load('starWeapon.png');
+    var size = 30.0;
     sprite = Sprite(spritePlayer);
     position = Vector2(
         Random()

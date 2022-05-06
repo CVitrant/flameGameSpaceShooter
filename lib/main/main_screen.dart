@@ -20,7 +20,7 @@ class MainScreen extends Component with HasGameRef<GameManager> {
       ..position = (gameRef.size / 2));
 
     _scoreText = TextComponent(
-      text: "Score: 0",
+      text: "Best Score: 0",
       position: Vector2(gameRef.size.toRect().width / 2, 10),
       anchor: Anchor.topCenter,
     );
